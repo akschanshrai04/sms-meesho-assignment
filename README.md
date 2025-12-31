@@ -9,7 +9,7 @@ A Polyglot, event-driven SMS system split into two services: a Java service that
 #### Send SMS
 
 ```http
-  POST /v0/sms/send
+  POST http://localhost:8080/v0/sms/send
 ```
 
 | Parameter | Type     | Description                |
@@ -20,7 +20,7 @@ A Polyglot, event-driven SMS system split into two services: a Java service that
 #### Get SMS History
 
 ```http
-  GET /v0/user/{User_id}/messages 
+GET http://localhost:8000/v0/user/{User_id}/messages
 ```
 
 | Parameter | Type     | Description                       |
@@ -34,7 +34,7 @@ The Java service is responsible for exposing REST APIs and producing SMS events 
 
 Setup instructions, configuration, and run commands are as follows:
 
-- Clone the javaMeesho folder: 
+- Clone and navigate to the javaMeesho folder: 
 ```bash
 git clone https://github.com/akschanshrai04/sms-meesho-assignment.git
 cd javaMeesho
@@ -59,10 +59,9 @@ The Go service consumes SMS events from Kafka and persists them to MongoDB. It a
 
 Setup instructions, configuration, and run commands are as follows:
 
-- clone the goMeesho folder: 
+- navigate to the goMeesho folder: 
 ```bash
-git clone <go-service-repository-url>
-cd <go-project-root>
+cd goMeesho
 ```
 
 - create a `.env` in the root of the project and setup the environment variables as mentioned in the `README.md`
@@ -132,17 +131,19 @@ MONGO_DB_NAME : <database_name>
 ---
 
 ### 5. Redis (Cloud)
-A cloud-hosted Redis instance is used by the Java service for rate limiting and temporary state management.
+A cloud-hosted Redis instance is used by the Java SMS Sender service to determine whether a number is blocked
 
-- The Java service connects to Redis using host, port, and credentials provided via environment variables.
-- No local Redis setup is required.
-- Any managed Redis provider (e.g., Redis Cloud) can be used.
-- To configure Redis for the Java service, the following properties must be set in the application.properties file using the credentials provided by the cloud-managed Redis instance.
+- When an SMS send request is received, the Java service first checks Redis to see if the phone number is blocked.
+- If the number is blocked, the request is rejected and the SMS is not sent.
+- If the number is not blocked:
+    - The Java service calls the third-party SMS vendor
+    - An SMS event is published to Kafka for asynchronous processing by downstream services
+
 ```bash
-spring.data.redis.host : <redis_host>
-spring.data.redis.port : <redis_port>
-spring.data.redis.username : <redis_username>
-spring.data.redis.password : <redis_password>
-spring.data.redis.ssl.enabled : false
+spring.data.redis.host = <redis_host>
+spring.data.redis.port = <redis_port>
+spring.data.redis.username = <redis_username>
+spring.data.redis.password = <redis_password>
+spring.data.redis.ssl.enabled = false
 ```
 
