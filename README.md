@@ -32,21 +32,64 @@ A Polyglot, event-driven SMS system split into two services: a Java service that
 ### 1. SMS Sender Service (Java – Spring Boot)
 The Java service is responsible for exposing REST APIs and producing SMS events to Kafka.
 
-Detailed setup instructions, configuration, and run commands are documented here:  
-➡️ **[Java Service README](./javaMeesho/README.md)**
+Setup instructions, configuration, and run commands are as follows:
+
+- Clone the javaMeesho folder: 
+```bash
+git clone https://github.com/akschanshrai04/sms-meesho-assignment.git
+cd javaMeesho
+```
+- Configure the `application.properties` file as mentioned in the `README.md`
+
+- Build and Run using maven: 
+```bash
+mvn clean install
+mvn spring-boot:run
+```
+
+- once the application starts succesfully, it will be available on: 
+```bash
+http://localhost:8080
+```
 
 ---
 
 ### 2. SMS Store Service (Go)
 The Go service consumes SMS events from Kafka and persists them to MongoDB. It also exposes APIs to fetch SMS history.
 
-Detailed setup instructions and run commands are documented here:  
-➡️ **[Go Service README](./goMeesho/README.md)**
+Setup instructions, configuration, and run commands are as follows:
+
+- clone the goMeesho folder: 
+```bash
+git clone <go-service-repository-url>
+cd <go-project-root>
+```
+
+- create a `.env` in the root of the project and setup the environment variables as mentioned in the `README.md`
+
+- install the dependencies: 
+```bash
+go mod tidy
+```
+
+- run the services: 
+start the http api
+```bash
+go run cmd/api/main.go 
+```
+
+start the kafka consumer
+```bash
+go run cmd/consumer/main.go 
+```
+
 
 ---
 
 ### 3. Running Kafka Locally (Docker)
 Kafka is used for asynchronous communication between the Java and Go services.
+
+Run the following command: 
 
 ```bash
 docker-compose up -d
