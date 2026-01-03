@@ -9,7 +9,7 @@ A Polyglot, event-driven SMS system split into two services: a Java service that
 #### Send SMS
 
 ```http
-  POST http://localhost:8080/v0/sms/send
+POST http://localhost:8080/v0/sms/send
 ```
 
 | Parameter | Type     | Description                |
